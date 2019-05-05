@@ -8,9 +8,23 @@
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <title>Page Title</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
-    <script src='keywords.js'></script>
     <script src='main.js'></script>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        th, td {
+            text-align: left;
+            padding: 8px;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #edfcff;
+        }
+    </style>
 </head>
 
 <body>
@@ -62,7 +76,6 @@
         foreach ($groups as $k => $v) $tempArr[$k] = count($v);
         arsort($tempArr);
         foreach ($tempArr as $k => $v) $sorted[$k] = $groups[$k];
-        //$sorted = array_multisort(array_map('count', $groups), SORT_DESC, $groups);
         foreach ($sorted as $key => $value) {
             echo "<h2>" . $key . "</h2>";
             $totalSearchVolume = 0;
