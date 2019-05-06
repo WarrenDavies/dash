@@ -6,7 +6,7 @@
 <head>
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Page Title</title>
+    <title>Keyword Grouper</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <script src='main.js'></script>
     <style>
@@ -69,13 +69,32 @@
                 }
             }
         }
-        echo "<br/><br/>";
-        echo count($groups);
-        echo "<br/><br/>";
+        foreach ($groups as $key => $value) {
+            $totalSearchVolume = 0;
+            $totalKeywordDifficulty = 0;
+            $totalKeywords = 0;
+            $averageKeywordDifficulty = 0;
+            foreach ($value as $word => $keyword) {
+                $dataKey = trim(str_replace(' ', '_', $keyword));
+                if (array_key_exists($dataKey, $data)) {
+                        $searchVolume = $data[$dataKey][0];
+                    $keywordDifficulty = $data[$dataKey][1];
+                    $totalSearchVolume = $totalSearchVolume + $searchVolume;
+                    $totalKeywordDifficulty = $totalKeywordDifficulty + $keywordDifficulty;
+                    $totalKeywords = $totalKeywords + 1;
+                }
+            }
+            $groups[$key]['totalSearchVolume'] = $totalSearchVolume;
+            $groups[$key]['averageKeywordDifficulty'] = $totalKeywordDifficulty / $totalKeywords;
+        }
+
         $tempArr = $sorted = array();
-        foreach ($groups as $k => $v) $tempArr[$k] = count($v);
+        foreach ($groups as $k => $v) {
+            $tempArr[$k] = $groups[$k]['totalSearchVolume'];
+        } 
         arsort($tempArr);
         foreach ($tempArr as $k => $v) $sorted[$k] = $groups[$k];
+
         foreach ($sorted as $key => $value) {
             echo "<h2>" . $key . "</h2>";
             $totalSearchVolume = 0;
@@ -85,6 +104,10 @@
             echo '<table>';
             echo '<tr><th>Keyword</th><th>Search Volume</th><th>Keyword Difficulty</th></tr>';
             foreach ($value as $word => $keyword) {
+
+                if ($keyword == 'totalSearchVolume' || $keyword == 'averageKeywordDifficulty') {
+                    continue;
+                }
                 $dataKey = str_replace(' ', '_', $keyword);
                 if (array_key_exists($dataKey, $data)) {
                     $searchVolume = $data[$dataKey][0];
@@ -92,16 +115,14 @@
                     $totalSearchVolume = $totalSearchVolume + $searchVolume;
                     $totalKeywordDifficulty = $totalKeywordDifficulty + $keywordDifficulty;
                     $totalKeywords = $totalKeywords + 1;
-                } else {
-                    $searchVolume = "n/a";
-                    $keywordDifficulty = "n/a";
+                    echo '<tr><td>' . $keyword . "</td><td>" . $searchVolume . "</td><td>" . $keywordDifficulty . "</td></tr>";
                 }
-                echo '<tr><td>' . $keyword . "</td><td>" . $searchVolume . "</td><td>" . $keywordDifficulty . "</td></tr>";
+                
             }
             $averageKeywordDifficulty = $totalKeywordDifficulty / $totalKeywords;
             echo "<tr><td><h4>Total / Average: </h4> " . "</td><td><h4>" . number_format($totalSearchVolume) . "</h4></td><td><h4>" . number_format($averageKeywordDifficulty) . "</h4>";
             echo '</table>';
-        }
+        } 
     ?>
     
 </body>
